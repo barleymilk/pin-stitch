@@ -1,6 +1,7 @@
 # 📡 API & Data Schema Spec
 
 ## 1. Product Object
+
 ```typescript
 interface Product {
   id: string;
@@ -23,11 +24,11 @@ interface Product {
 
 실시간 소통 및 인터랙티브 쇼핑을 위한 이벤트 명세입니다.
 
-| Event Name | Type | Description | Data Schema |
-| :--- | :--- | :--- | :--- |
-| `chat:message` | Send/Receive | 실시간 채팅 메시지 송수신 | `{ userId: string, userName: string, message: string, timestamp: string }` |
-| `live:product-pop` | Receive | 방송 중 특정 상품 강조 팝업 알림 | `{ productId: string, productName: string, discountPrice: number, duration: number }` |
-| `live:stats` | Receive | 실시간 시청자 수 및 좋아요 업데이트 | `{ viewerCount: number, likeCount: number }` |
+| Event Name         | Type         | Description                         | Data Schema                                                                           |
+| :----------------- | :----------- | :---------------------------------- | :------------------------------------------------------------------------------------ |
+| `chat:message`     | Send/Receive | 실시간 채팅 메시지 송수신           | `{ userId: string, userName: string, message: string, timestamp: string }`            |
+| `live:product-pop` | Receive      | 방송 중 특정 상품 강조 팝업 알림    | `{ productId: string, productName: string, discountPrice: number, duration: number }` |
+| `live:stats`       | Receive      | 실시간 시청자 수 및 좋아요 업데이트 | `{ viewerCount: number, likeCount: number }`                                          |
 
 ---
 
@@ -39,6 +40,7 @@ interface Product {
 - **Description**: 사용자가 업로드한 사진에 선택한 상품을 합성하여 결과 이미지를 생성합니다.
 
 ### Request Body
+
 ```json
 {
   "userImage": "string (base64 or image_url)",
@@ -51,6 +53,7 @@ interface Product {
 ```
 
 ### Response Body
+
 ```json
 {
   "resultImageUrl": "string (url)",
