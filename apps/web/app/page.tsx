@@ -1,5 +1,5 @@
-import { SiteBadge } from "@pin-stitch/ui";
-import { sampleKpis } from "@pin-stitch/domain";
+import { SiteBadge } from '@pin-stitch/ui';
+import { sampleKpis } from '@pin-stitch/domain';
 
 export default function Page() {
   return (

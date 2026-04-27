@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Providers from "./providers";
+import type { Metadata } from 'next';
+import './globals.css';
+import Providers from './providers';
 
 export const metadata: Metadata = {
-  title: "pin-stitch admin",
-  description: "Global fashion commerce admin console"
+  title: 'pin-stitch admin',
+  description: 'Global fashion commerce admin console',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

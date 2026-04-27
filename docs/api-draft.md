@@ -9,9 +9,11 @@
 ## 2. 공통 규칙
 
 ### Base URL
+
 - `/api/v1`
 
 ### Headers
+
 - `Authorization: Bearer <accessToken>`
 - `Content-Type: application/json`
 - `Idempotency-Key: <uuid>` (결제/정산 확정 API 권장)
@@ -63,32 +65,32 @@
 
 ### 3.1 식별자 타입
 
-| 필드 | 타입 | 예시 | 제약 |
-|---|---|---|---|
-| `productId` | string | `prod_123` | 필수, prefix `prod_` |
-| `variantId` | string | `var_123` | 필수, prefix `var_` |
-| `orderId` | string | `ord_123` | 필수, prefix `ord_` |
-| `settlementId` | string | `set_123` | 필수, prefix `set_` |
+| 필드           | 타입   | 예시       | 제약                 |
+| -------------- | ------ | ---------- | -------------------- |
+| `productId`    | string | `prod_123` | 필수, prefix `prod_` |
+| `variantId`    | string | `var_123`  | 필수, prefix `var_`  |
+| `orderId`      | string | `ord_123`  | 필수, prefix `ord_`  |
+| `settlementId` | string | `set_123`  | 필수, prefix `set_`  |
 
 ### 3.2 금액 타입 (`Money`)
 
-| 필드 | 타입 | 설명 | 제약 |
-|---|---|---|---|
-| `currency` | enum | ISO 4217 통화 | `KRW`, `USD`, `EUR` 등 |
-| `amount` | decimal | 금액 | 0 이상 |
+| 필드       | 타입    | 설명          | 제약                   |
+| ---------- | ------- | ------------- | ---------------------- |
+| `currency` | enum    | ISO 4217 통화 | `KRW`, `USD`, `EUR` 등 |
+| `amount`   | decimal | 금액          | 0 이상                 |
 
 ### 3.3 가격 견적 타입 (`PriceQuote`)
 
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `basePrice` | `Money` | Y | 기준 판매가 |
-| `taxAmount` | `Money` | Y | 세금 금액 |
-| `dutyAmount` | `Money` | Y | 관세 금액 |
-| `shippingFee` | `Money` | Y | 물류비 |
-| `finalPrice` | `Money` | Y | 최종 결제 예상 금액 |
-| `marginRate` | decimal | Y | 0.0 ~ 1.0 |
-| `explain` | string[] | Y | 산출 근거 배열 |
-| `calculatedAt` | datetime | Y | 계산 시각 |
+| 필드           | 타입     | 필수 | 설명                |
+| -------------- | -------- | ---- | ------------------- |
+| `basePrice`    | `Money`  | Y    | 기준 판매가         |
+| `taxAmount`    | `Money`  | Y    | 세금 금액           |
+| `dutyAmount`   | `Money`  | Y    | 관세 금액           |
+| `shippingFee`  | `Money`  | Y    | 물류비              |
+| `finalPrice`   | `Money`  | Y    | 최종 결제 예상 금액 |
+| `marginRate`   | decimal  | Y    | 0.0 ~ 1.0           |
+| `explain`      | string[] | Y    | 산출 근거 배열      |
+| `calculatedAt` | datetime | Y    | 계산 시각           |
 
 ## 4. 고객 웹 API (P0 -> P1)
 
@@ -108,14 +110,14 @@
 
 `ProductSummary` 타입
 
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `productId` | string | Y | 상품 ID |
-| `name` | string | Y | 상품명 |
-| `brandName` | string | Y | 브랜드명 |
-| `thumbnailUrl` | string | Y | 썸네일 URL |
-| `basePrice` | `Money` | Y | 기준가 |
-| `inStock` | boolean | Y | 재고 여부 |
+| 필드           | 타입    | 필수 | 설명       |
+| -------------- | ------- | ---- | ---------- |
+| `productId`    | string  | Y    | 상품 ID    |
+| `name`         | string  | Y    | 상품명     |
+| `brandName`    | string  | Y    | 브랜드명   |
+| `thumbnailUrl` | string  | Y    | 썸네일 URL |
+| `basePrice`    | `Money` | Y    | 기준가     |
+| `inStock`      | boolean | Y    | 재고 여부  |
 
 ## 4.2 상품 상세 조회 (P0)
 
@@ -144,14 +146,14 @@
 
 Request 필드 정의
 
-| 필드 | 타입 | 필수 | 제약 |
-|---|---|---|---|
-| `productId` | string | Y | `prod_` prefix |
-| `variantId` | string | Y | `var_` prefix |
-| `quantity` | int | Y | 1 이상 |
-| `destinationCountry` | string | Y | ISO 3166-1 alpha-2 |
-| `currency` | string | Y | ISO 4217 |
-| `originCountry` | string | N | ISO 3166-1 alpha-2 |
+| 필드                 | 타입   | 필수 | 제약               |
+| -------------------- | ------ | ---- | ------------------ |
+| `productId`          | string | Y    | `prod_` prefix     |
+| `variantId`          | string | Y    | `var_` prefix      |
+| `quantity`           | int    | Y    | 1 이상             |
+| `destinationCountry` | string | Y    | ISO 3166-1 alpha-2 |
+| `currency`           | string | Y    | ISO 4217           |
+| `originCountry`      | string | N    | ISO 3166-1 alpha-2 |
 
 Response `data`
 
@@ -163,10 +165,7 @@ Response `data`
   "shippingFee": { "currency": "KRW", "amount": 15000 },
   "finalPrice": { "currency": "KRW", "amount": 300000 },
   "marginRate": 0.22,
-  "explain": [
-    "Applied KR import duty rate",
-    "Applied margin floor policy"
-  ],
+  "explain": ["Applied KR import duty rate", "Applied margin floor policy"],
   "calculatedAt": "2026-04-27T04:20:00.000Z"
 }
 ```
@@ -187,12 +186,12 @@ Response `data`
 
 `POST /checkout/confirm` Request
 
-| 필드 | 타입 | 필수 | 제약 |
-|---|---|---|---|
-| `cartId` | string | Y | `cart_` prefix |
-| `shippingAddress` | object | Y | 국가/우편번호/주소 필수 |
-| `paymentMethodId` | string | Y | 등록된 결제 수단 |
-| `expectedFinalPrice` | `Money` | Y | 프론트 계산값 |
+| 필드                 | 타입    | 필수 | 제약                    |
+| -------------------- | ------- | ---- | ----------------------- |
+| `cartId`             | string  | Y    | `cart_` prefix          |
+| `shippingAddress`    | object  | Y    | 국가/우편번호/주소 필수 |
+| `paymentMethodId`    | string  | Y    | 등록된 결제 수단        |
+| `expectedFinalPrice` | `Money` | Y    | 프론트 계산값           |
 
 ## 5. 관리자 웹 API (P0 -> P1)
 
@@ -206,12 +205,12 @@ Response `data`
 
 `POST /admin/products` Request 주요 필드
 
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `name` | string | Y | 상품명 |
-| `brandPartnerId` | string | Y | 파트너 ID |
-| `categoryId` | string | Y | 카테고리 ID |
-| `variants` | object[] | Y | `sku`, `size`, `color`, `supplyPrice` 포함 |
+| 필드             | 타입     | 필수 | 설명                                       |
+| ---------------- | -------- | ---- | ------------------------------------------ |
+| `name`           | string   | Y    | 상품명                                     |
+| `brandPartnerId` | string   | Y    | 파트너 ID                                  |
+| `categoryId`     | string   | Y    | 카테고리 ID                                |
+| `variants`       | object[] | Y    | `sku`, `size`, `color`, `supplyPrice` 포함 |
 
 ## 5.2 가격 정책 관리 (P0/P1)
 
@@ -236,13 +235,13 @@ Response `data`
 
 `PricePolicy` 타입
 
-| 필드 | 타입 | 필수 | 제약 |
-|---|---|---|---|
-| `policyId` | string | Y | `pol_` prefix |
-| `name` | string | Y | 1~100 chars |
-| `marginFloor` | decimal | Y | 0.0~1.0 |
-| `discountCap` | decimal | Y | 0.0~1.0 |
-| `isActive` | boolean | Y | 활성화 여부 |
+| 필드          | 타입    | 필수 | 제약          |
+| ------------- | ------- | ---- | ------------- |
+| `policyId`    | string  | Y    | `pol_` prefix |
+| `name`        | string  | Y    | 1~100 chars   |
+| `marginFloor` | decimal | Y    | 0.0~1.0       |
+| `discountCap` | decimal | Y    | 0.0~1.0       |
+| `isActive`    | boolean | Y    | 활성화 여부   |
 
 ## 5.3 주문/배송 관리 (P0)
 
@@ -252,10 +251,10 @@ Response `data`
 
 `PATCH /admin/orders/:orderId/status` Request
 
-| 필드 | 타입 | 필수 | 제약 |
-|---|---|---|---|
-| `status` | enum | Y | `PLACED | PAID | FULFILLING | SHIPPED | DELIVERED | CANCELLED` |
-| `reason` | string | N | 상태 변경 사유 |
+| 필드     | 타입   | 필수 | 제약           |
+| -------- | ------ | ---- | -------------- | ---- | ---------- | ------- | --------- | ---------- |
+| `status` | enum   | Y    | `PLACED        | PAID | FULFILLING | SHIPPED | DELIVERED | CANCELLED` |
+| `reason` | string | N    | 상태 변경 사유 |
 
 ## 5.4 정산 관리 (P0/P1)
 
@@ -265,16 +264,16 @@ Response `data`
 
 `Settlement` 타입
 
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `settlementId` | string | Y | 정산 ID |
-| `periodStartAt` | datetime | Y | 정산 시작 |
-| `periodEndAt` | datetime | Y | 정산 종료 |
-| `grossSales` | `Money` | Y | 총 매출 |
-| `refundAmount` | `Money` | Y | 환불 금액 |
-| `feeAmount` | `Money` | Y | 수수료 |
-| `netPayout` | `Money` | Y | 지급 예정 금액 |
-| `status` | enum | Y | `DRAFT | FINALIZED | HOLD` |
+| 필드            | 타입     | 필수 | 설명           |
+| --------------- | -------- | ---- | -------------- | --------- | ----- |
+| `settlementId`  | string   | Y    | 정산 ID        |
+| `periodStartAt` | datetime | Y    | 정산 시작      |
+| `periodEndAt`   | datetime | Y    | 정산 종료      |
+| `grossSales`    | `Money`  | Y    | 총 매출        |
+| `refundAmount`  | `Money`  | Y    | 환불 금액      |
+| `feeAmount`     | `Money`  | Y    | 수수료         |
+| `netPayout`     | `Money`  | Y    | 지급 예정 금액 |
+| `status`        | enum     | Y    | `DRAFT         | FINALIZED | HOLD` |
 
 ## 6. AI Commerce Agent API (P1)
 
@@ -295,13 +294,13 @@ Response `data`
 
 `WorkflowTask` 타입
 
-| 필드 | 타입 | 필수 | 설명 |
-|---|---|---|---|
-| `taskId` | string | Y | `task_` prefix |
-| `taskType` | enum | Y | `ORDER_EXCEPTION | SETTLEMENT_REVIEW | PRODUCT_REVIEW` |
-| `status` | enum | Y | `OPEN | IN_PROGRESS | DONE` |
-| `ownerId` | string | N | 담당자 |
-| `createdAt` | datetime | Y | 생성 시각 |
+| 필드        | 타입     | 필수 | 설명             |
+| ----------- | -------- | ---- | ---------------- | ----------------- | --------------- |
+| `taskId`    | string   | Y    | `task_` prefix   |
+| `taskType`  | enum     | Y    | `ORDER_EXCEPTION | SETTLEMENT_REVIEW | PRODUCT_REVIEW` |
+| `status`    | enum     | Y    | `OPEN            | IN_PROGRESS       | DONE`           |
+| `ownerId`   | string   | N    | 담당자           |
+| `createdAt` | datetime | Y    | 생성 시각        |
 
 ## 7. 상태 코드 기준
 
@@ -327,4 +326,3 @@ Response `data`
 - 외부 파트너 웹훅 수신 엔드포인트
 - GraphQL/BFF 도입 검토
 - 이벤트 기반 아키텍처 확장(주문/정산 비동기화)
-
