@@ -191,8 +191,8 @@
 
 ## 12. 결정 사항
 
-- MVP는 `apps/web` 하나에서 고객 화면과 `/seller` 화면을 함께 구현합니다.
-- MVP는 실제 백엔드 없이 Next.js Route Handler와 Mock 데이터를 사용합니다.
+- MVP 화면은 `apps/web` 하나에서 고객 화면과 `/seller` 화면을 함께 구현합니다.
+- MVP API는 `apps/api` NestJS에서 구현하고, PostgreSQL seed 데이터로 데모 가능한 상태를 만듭니다.
 - 리뷰 요약, 체형 적합도, 쿠폰 적용, 셀러 인사이트는 규칙 기반으로 시작합니다.
 - 주문은 실제 결제 없이 `ORDER_CREATED` 상태의 주문 생성 흐름으로 구현합니다.
 - 라이브 커머스는 MVP 이후 P3 확장 기능으로 분리하고, 영상 송출은 외부 서비스를 사용합니다.

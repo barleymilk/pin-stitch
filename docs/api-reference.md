@@ -2,7 +2,7 @@
 
 ## 1. 기본 규칙
 
-MVP API는 Next.js Route Handler로 구현하는 Mock API입니다. 외부 서버, 실제 DB, 실제 인증은 사용하지 않습니다.
+MVP API는 `apps/api`의 NestJS 서버에서 구현합니다. 데이터는 PostgreSQL에 저장하고 Prisma로 접근합니다. 초기 데모 데이터는 seed 스크립트로 적재합니다.
 
 Base URL:
 
@@ -46,9 +46,10 @@ Base URL:
 
 ## 2. 구현 원칙
 
-- Route Handler는 요청 파싱, 검증, 응답 포맷만 담당합니다.
-- 요청 검증은 Zod 스키마를 사용합니다.
-- 데이터는 `packages/mock-data`에서 가져옵니다.
+- NestJS Controller는 요청 파싱, DTO 검증, 응답 포맷을 담당합니다.
+- NestJS Service는 유스케이스와 비즈니스 흐름을 담당합니다.
+- DB 접근은 Prisma Client를 사용합니다.
+- 초기 데이터는 Prisma seed 스크립트로 PostgreSQL에 적재합니다.
 - 계산은 `packages/domain` 함수로 처리합니다.
 - 응답 타입은 `packages/domain`의 타입을 재사용합니다.
 

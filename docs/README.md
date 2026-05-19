@@ -9,7 +9,8 @@
 | [product-requirements.md](./product-requirements.md) | 제품 목표, 사용자, MVP 범위, 성공 지표 |
 | [implementation-guide.md](./implementation-guide.md) | 기술 스택, 앱/패키지 구조, 구현 순서, 도메인 로직 기준 |
 | [tech-stack.md](./tech-stack.md) | 프로젝트에서 사용할 기술 스택과 인프라 구성 |
-| [api-reference.md](./api-reference.md) | MVP Mock API 엔드포인트, 응답 규칙, 상태 코드 |
+| [erd.md](./erd.md) | MVP 데이터 모델과 엔티티 관계 |
+| [api-reference.md](./api-reference.md) | NestJS API 엔드포인트, 응답 규칙, 상태 코드 |
 | [ui-guidelines.md](./ui-guidelines.md) | 화면별 요구사항, 디자인 토큰, UI/접근성 기준 |
 | [archive-2026-05-19](./archive-2026-05-19/) | 정리 전 원본 문서 보관본 |
 
@@ -52,7 +53,7 @@
 - `packages/domain/src/types.ts`: 사용자, 체형, 상품, 리뷰, 재고, 쿠폰, 장바구니, 주문, 반품, 셀러 인사이트, API 응답 타입
 - `packages/domain/src/index.ts`: 도메인 타입 export
 
-다음 구현의 첫 작업은 `packages/domain` 계산 로직과 `packages/mock-data` 샘플 데이터를 추가하는 것입니다.
+다음 구현의 첫 작업은 `packages/domain` 계산 로직, Prisma schema, seed 데이터를 추가하는 것입니다.
 
 ## 문서 관리 원칙
 
