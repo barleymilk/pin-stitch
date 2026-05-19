@@ -8,6 +8,7 @@
 | --- | --- |
 | [product-requirements.md](./product-requirements.md) | 제품 목표, 사용자, MVP 범위, 성공 지표 |
 | [implementation-guide.md](./implementation-guide.md) | 기술 스택, 앱/패키지 구조, 구현 순서, 도메인 로직 기준 |
+| [tech-stack.md](./tech-stack.md) | 프로젝트에서 사용할 기술 스택과 인프라 구성 |
 | [api-reference.md](./api-reference.md) | MVP Mock API 엔드포인트, 응답 규칙, 상태 코드 |
 | [ui-guidelines.md](./ui-guidelines.md) | 화면별 요구사항, 디자인 토큰, UI/접근성 기준 |
 | [archive-2026-05-19](./archive-2026-05-19/) | 정리 전 원본 문서 보관본 |
