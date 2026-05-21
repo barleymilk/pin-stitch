@@ -51,15 +51,18 @@ Base URL:
 - DB 접근은 Prisma Client를 사용합니다.
 - 초기 데이터는 Prisma seed 스크립트로 PostgreSQL에 적재합니다.
 - 계산은 `packages/domain` 함수로 처리합니다.
-- 응답 타입은 `packages/domain`의 타입을 재사용합니다.
+- 응답 타입은 `packages/domain`의 타입을 재사용하되, 사용자 화면에 내부 필드를 숨겨야 하는 경우 외부 응답 DTO를 별도로 정의합니다.
+- 내부 계산/저장 타입과 외부 응답 DTO가 다른 경우 외부 응답 DTO를 우선 사용합니다.
+- 일반 사용자 API에는 내부 추적용 ID 배열, 원본 근거 ID, 디버깅용 필드를 직접 노출하지 않습니다.
 
 ## 3. 공통 타입
 
 주요 타입은 `packages/domain/src/types.ts`를 기준으로 합니다.
 
 - `User`, `BodyProfile`
-- `Product`, `ProductVariant`, `SizeMeasurement`
-- `FitReview`, `FitScore`, `ReviewSummary`
+- `Product`, `ProductImage`, `ProductVariant`, `SizeMeasurement`
+- `ProductListResponse`, `ProductDetailResponse`
+- `FitReview`, `ReviewListResponse`, `FitScore`, `ReviewSummary`, `ReviewSummaryResponse`
 - `Store`, `StoreInventory`
 - `Coupon`, `CouponApplication`, `ExcludedCoupon`, `CartPricing`
 - `Cart`, `CartItem`
@@ -106,11 +109,14 @@ Query:
 | `brandId` | string | 브랜드 |
 | `minPrice` | number | 최소 가격 |
 | `maxPrice` | number | 최대 가격 |
+| `recommendedFitOnly` | boolean | `true`면 점수와 신뢰도를 함께 만족하는 추천 적합도 상품만 조회 |
 | `sort` | string | `popular`, `newest`, `price_asc`, `price_desc`, `fit_score_desc` |
 | `page` | number | 페이지 |
 | `limit` | number | 개수 |
 
-Response `data`:
+MVP에서는 체형 적합도 점수 범위 필터를 제공하지 않습니다. `recommendedFitOnly=true`는 점수만으로 자르지 않고 `score >= 70`, `matchedReviewCount >= 5`, `confidence != LOW`를 함께 만족하는 상품을 대상으로 합니다. 순수 점수 범위 필터는 P1 이후 도입합니다.
+
+Response `data`: `ProductListResponse`
 
 ```json
 {
@@ -119,7 +125,10 @@ Response `data`:
       "productId": "prod_123",
       "brandName": "Muguet",
       "name": "Soft Line Jacket",
-      "thumbnailUrl": "/images/products/prod_123.jpg",
+      "thumbnail": {
+        "url": "/images/products/prod_123.jpg",
+        "altText": "Muguet Soft Line Jacket Black front view"
+      },
       "price": { "currency": "KRW", "amount": 89000 },
       "fitScore": {
         "productId": "prod_123",
@@ -145,7 +154,7 @@ Response `data`:
 GET /products/:productId
 ```
 
-Response `data`:
+Response `data`: `ProductDetailResponse`
 
 ```json
 {
@@ -158,7 +167,13 @@ Response `data`:
     "category": "OUTER",
     "material": "Polyester 78%, Rayon 18%, Span 4%",
     "fit": "REGULAR",
-    "imageUrls": ["/images/products/prod_123_1.jpg"]
+    "images": [
+      {
+        "url": "/images/products/prod_123_1.jpg",
+        "altText": "Muguet Soft Line Jacket Black front view",
+        "sortOrder": 1
+      }
+    ]
   },
   "variants": [
     {
@@ -209,26 +224,27 @@ Query:
 | `heightMin` | number | 최소 키 |
 | `heightMax` | number | 최대 키 |
 | `bodyShape` | `BodyShape` | 골격 타입 |
+| `fitPreference` | `FitPreference` | 리뷰 작성 시점의 선호 핏 |
 | `purchasedSize` | `ApparelSize` | 구매 사이즈 |
 | `fitResult` | `FitResult` | 핏 평가 |
 | `keyword` | string | 리뷰 키워드 |
 | `page` | number | 페이지 |
 | `limit` | number | 개수 |
 
-Response `data`:
+Response `data`: `ReviewListResponse`
+
+고객 리뷰 목록은 내부 `FitReview`가 아니라 비식별 응답 DTO를 사용합니다. `reviewId`, `userId`, `productId`, `variantId`는 응답에 포함하지 않습니다.
 
 ```json
 {
   "items": [
     {
-      "reviewId": "rev_123",
-      "userId": "user_123",
-      "productId": "prod_123",
-      "variantId": "var_123",
+      "reviewerLabel": "비슷한 체형의 구매자",
       "rating": 4,
       "content": "허리는 잘 맞고 어깨가 살짝 여유 있어요.",
       "heightCm": 160,
       "bodyShape": "WAVE",
+      "fitPreference": "REGULAR",
       "purchasedSize": "M",
       "fitResult": "TRUE_TO_SIZE",
       "positiveKeywords": ["허리", "소재"],
@@ -258,7 +274,39 @@ Query:
 | `variantId` | string | 선택 옵션. 생략 가능 |
 | `bodyProfileId` | string | 생략 시 현재 샘플 사용자 프로필 사용 |
 
-Response `data`: `ReviewSummary`
+Response `data`: `ReviewSummaryResponse`
+
+`ReviewSummaryResponse`는 내부 계산 타입인 `ReviewSummary`에서 `basisReviewIds`를 제거하고, 사용자 화면에 필요한 체형 조건과 대표 근거 리뷰만 포함합니다.
+
+```json
+{
+  "productId": "prod_123",
+  "variantId": "var_123",
+  "summary": "160cm 전후 WAVE 체형 사용자는 허리 라인은 만족하지만 어깨가 약간 여유롭다는 의견이 많습니다.",
+  "warnings": ["어깨가 여유롭다는 리뷰가 반복됩니다."],
+  "matchedReviewCount": 18,
+  "bodyCondition": {
+    "heightCm": 162,
+    "bodyShape": "WAVE",
+    "fitPreference": "REGULAR",
+    "purchasedSize": "M"
+  },
+  "representativeReviews": [
+    {
+      "rating": 4,
+      "content": "허리는 잘 맞고 어깨가 살짝 여유 있어요.",
+      "heightCm": 160,
+      "bodyShape": "WAVE",
+      "fitPreference": "REGULAR",
+      "purchasedSize": "M",
+      "fitResult": "TRUE_TO_SIZE",
+      "positiveKeywords": ["허리", "소재"],
+      "negativeKeywords": ["어깨"],
+      "createdAt": "2026-05-15T00:00:00.000Z"
+    }
+  ]
+}
+```
 
 ### 매장 재고
 
@@ -329,7 +377,7 @@ POST /cart/apply-best-coupons
 
 ```text
 POST /orders
-GET /orders/:orderId
+GET /orders/:orderNumber
 GET /me/orders
 ```
 
@@ -353,9 +401,11 @@ GET /me/orders
 
 - 주문은 실제 결제 없이 생성합니다.
 - 주문 생성 시 장바구니 스냅샷을 저장합니다.
+- 주문 생성 시 내부 `orderId`와 별도의 사용자용 `orderNumber`를 발급합니다.
 - 자동 적용된 쿠폰과 할인 금액을 주문 스냅샷에 저장합니다.
 - 초기 상태는 `ORDER_CREATED`입니다.
 - 주문 생성 후 장바구니는 비웁니다.
+- 일반 사용자 화면과 고객용 주문 상세 조회 URL에는 `orderNumber`를 사용합니다.
 
 ## 5. 셀러 API
 
@@ -414,6 +464,7 @@ Query:
 | --- | --- | --- |
 | `productId` | string | 상품 |
 | `bodyShape` | `BodyShape` | 골격 타입 |
+| `fitPreference` | `FitPreference` | 리뷰 작성 시점의 선호 핏 |
 | `purchasedSize` | `ApparelSize` | 구매 사이즈 |
 | `ratingMax` | number | 최대 평점 |
 | `keyword` | string | 키워드 |
@@ -443,6 +494,12 @@ Response `data`:
 ```text
 GET /seller/returns/analysis
 ```
+
+Query:
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `productId` | string | 선택 상품. 생략 시 전체 상품 기준 |
 
 Response `data`:
 

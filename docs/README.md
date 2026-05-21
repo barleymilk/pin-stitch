@@ -12,6 +12,12 @@
 | [erd.md](./erd.md) | MVP 데이터 모델과 엔티티 관계 |
 | [api-reference.md](./api-reference.md) | NestJS API 엔드포인트, 응답 규칙, 상태 코드 |
 | [ui-guidelines.md](./ui-guidelines.md) | 화면별 요구사항, 디자인 토큰, UI/접근성 기준 |
+| [screen-design-plan.md](./screen-design-plan.md) | 고객 핵심 플로우 화면 설계, 컴포넌트, 상태, CTA |
+| [seller-screen-design-plan.md](./seller-screen-design-plan.md) | 셀러 분석 플로우 화면 설계, 지표, 차트, 인사이트 |
+| [component-inventory.md](./component-inventory.md) | 고객/셀러 공통 컴포넌트 목록, 우선순위, 구현 순서 |
+| [home-screen-design.md](./home-screen-design.md) | 홈 화면 `/` 상세 디자인 명세 |
+| [product-list-screen-design.md](./product-list-screen-design.md) | 상품 목록 화면 `/products` 상세 디자인 명세 |
+| [product-detail-screen-design.md](./product-detail-screen-design.md) | 상품 상세 화면 `/products/:productId` 상세 디자인 명세 |
 | [archive-2026-05-19](./archive-2026-05-19/) | 정리 전 원본 문서 보관본 |
 
 ## 권장 읽기 순서
@@ -19,7 +25,13 @@
 1. 제품 방향과 범위를 확인하려면 `product-requirements.md`
 2. 바로 구현을 시작하려면 `implementation-guide.md`
 3. 화면과 API를 연결할 때 `api-reference.md`
-4. UI를 만들거나 검수할 때 `ui-guidelines.md`
+4. 고객 핵심 플로우를 디자인할 때 `screen-design-plan.md`
+5. 셀러 분석 화면을 디자인할 때 `seller-screen-design-plan.md`
+6. 컴포넌트 단위를 정리할 때 `component-inventory.md`
+7. 홈 화면을 상세 설계할 때 `home-screen-design.md`
+8. 상품 목록 화면을 상세 설계할 때 `product-list-screen-design.md`
+9. 상품 상세 화면을 상세 설계할 때 `product-detail-screen-design.md`
+10. UI를 만들거나 검수할 때 `ui-guidelines.md`
 
 ## MVP P0 범위
 

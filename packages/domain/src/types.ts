@@ -8,6 +8,7 @@ export type CartId = `cart_${string}`;
 export type CartItemId = `cart_item_${string}`;
 export type CouponId = `cpn_${string}`;
 export type OrderId = `ord_${string}`;
+export type OrderNumber = string;
 export type ReturnReasonId = `ret_${string}`;
 export type InsightId = `ins_${string}`;
 
@@ -58,6 +59,12 @@ export type ProductCategory =
 export type ProductFit = "SLIM" | "REGULAR" | "LOOSE" | "OVERSIZED";
 export type ProductStatus = "ACTIVE" | "DRAFT" | "ARCHIVED";
 
+export interface ProductImage {
+  url: string;
+  altText: string;
+  sortOrder: number;
+}
+
 export interface Product {
   productId: ProductId;
   brandId: string;
@@ -68,10 +75,33 @@ export interface Product {
   material: string;
   fit: ProductFit;
   price: Money;
-  imageUrls: string[];
+  images: ProductImage[];
   status: ProductStatus;
   createdAt: ISODateTime;
   updatedAt: ISODateTime;
+}
+
+export interface ProductListItemResponse {
+  productId: ProductId;
+  brandName: string;
+  name: string;
+  thumbnail: {
+    url: string;
+    altText: string;
+  };
+  price: Money;
+  fitScore?: FitScore;
+}
+
+export interface ProductListResponse {
+  items: ProductListItemResponse[];
+  pagination: Pagination;
+}
+
+export interface ProductDetailResponse {
+  product: Product;
+  variants: ProductVariant[];
+  sizeGuide: SizeMeasurement[];
 }
 
 export interface ProductVariant {
@@ -105,11 +135,31 @@ export interface FitReview {
   content: string;
   heightCm?: number;
   bodyShape?: BodyShape;
+  fitPreference?: FitPreference;
   purchasedSize: ApparelSize;
   fitResult: FitResult;
   positiveKeywords: string[];
   negativeKeywords: string[];
   createdAt: ISODateTime;
+}
+
+export interface ReviewListItemResponse {
+  reviewerLabel: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  content: string;
+  heightCm?: number;
+  bodyShape?: BodyShape;
+  fitPreference?: FitPreference;
+  purchasedSize: ApparelSize;
+  fitResult: FitResult;
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  createdAt: ISODateTime;
+}
+
+export interface ReviewListResponse {
+  items: ReviewListItemResponse[];
+  pagination: Pagination;
 }
 
 export type FitScoreConfidence = "LOW" | "MEDIUM" | "HIGH";
@@ -130,6 +180,36 @@ export interface ReviewSummary {
   warnings: string[];
   matchedReviewCount: number;
   basisReviewIds: ReviewId[];
+}
+
+export interface ReviewSummaryBodyCondition {
+  heightCm?: number;
+  bodyShape?: BodyShape;
+  fitPreference?: FitPreference;
+  purchasedSize?: ApparelSize;
+}
+
+export interface ReviewSummaryRepresentativeReview {
+  rating: 1 | 2 | 3 | 4 | 5;
+  content: string;
+  heightCm?: number;
+  bodyShape?: BodyShape;
+  fitPreference?: FitPreference;
+  purchasedSize: ApparelSize;
+  fitResult: FitResult;
+  positiveKeywords: string[];
+  negativeKeywords: string[];
+  createdAt: ISODateTime;
+}
+
+export interface ReviewSummaryResponse {
+  productId: ProductId;
+  variantId?: VariantId;
+  summary: string;
+  warnings: string[];
+  matchedReviewCount: number;
+  bodyCondition: ReviewSummaryBodyCondition;
+  representativeReviews: ReviewSummaryRepresentativeReview[];
 }
 
 export interface Store {
@@ -243,6 +323,7 @@ export interface OrderLine {
 
 export interface Order {
   orderId: OrderId;
+  orderNumber: OrderNumber;
   userId: UserId;
   lines: OrderLine[];
   pricing: CartPricing;

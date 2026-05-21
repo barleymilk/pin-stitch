@@ -5,7 +5,7 @@
 ## 1. 설계 원칙
 
 - 내부 PK는 화면에 직접 노출하지 않습니다.
-- 사용자가 확인해야 하는 주문 식별자는 내부 `orderId`와 별도의 사용자용 주문번호를 둘 수 있습니다.
+- 사용자가 확인해야 하는 주문 식별자는 내부 `orderId`와 별도의 사용자용 `orderNumber`를 둡니다.
 - 상품, 주문, 쿠폰, 재고처럼 정합성이 중요한 데이터는 PostgreSQL에 저장합니다.
 - 리뷰 요약은 내부적으로 `basisReviewIds`로 근거 리뷰를 추적하지만, 사용자 화면에는 리뷰 수, 체형 조건, 대표 근거 리뷰만 표시합니다.
 - 이미지 파일은 DB에 저장하지 않고 AWS S3에 저장하며, DB에는 key, URL, 정렬 순서, 대체 텍스트 등 메타데이터만 저장합니다.
@@ -95,6 +95,7 @@ erDiagram
     string content
     int height_cm
     string body_shape
+    string fit_preference
     string purchased_size
     string fit_result
     datetime created_at
@@ -378,6 +379,9 @@ erDiagram
 | 타입 | 처리 방식 |
 | --- | --- |
 | `FitScore` | 상품, 리뷰, 반품 데이터를 기반으로 계산합니다. 필요하면 캐시 테이블을 나중에 추가합니다. |
+| `ProductListResponse`, `ProductDetailResponse` | 사용자 API 응답 DTO입니다. `PRODUCT`, `PRODUCT_IMAGE`, `PRODUCT_VARIANT`, `SIZE_MEASUREMENT`를 조합해 만들며 DB 저장 대상이 아닙니다. |
+| `ReviewListResponse` | 사용자 리뷰 목록 API 응답 DTO입니다. `FIT_REVIEW`를 기반으로 만들지만 `review_id`, `user_id` 같은 내부 식별자는 포함하지 않습니다. |
+| `ReviewSummaryResponse` | 사용자 API 응답 DTO입니다. `REVIEW_SUMMARY`, `REVIEW_SUMMARY_BASIS`, `FIT_REVIEW`를 조합해 만들며 DB 저장 대상이 아닙니다. |
 | `SellerProductInsight` | `FIT_REVIEW`, `REVIEW_KEYWORD`, `RETURN_REASON`, `SELLER_INSIGHT`를 집계해 응답합니다. |
 | `FitKeywordStat` | `REVIEW_KEYWORD` 집계 결과입니다. |
 | `BodyShapeSatisfaction` | 리뷰와 반품 데이터를 체형별로 집계한 결과입니다. |
@@ -414,7 +418,23 @@ MVP의 기본 통화는 `KRW`입니다.
 - `ORDER.pricing.finalTotal`
 - `CouponApplication.discountAmount`
 
+### 상품 이미지
+
+`Product.images`는 DB의 `PRODUCT_IMAGE` 레코드를 `sort_order` 오름차순으로 변환한 배열입니다.
+
+API 응답에서는 다음 필드를 기본으로 제공합니다.
+
+```text
+url: string
+altText: string
+sortOrder: integer
+```
+
+`altText`는 상품 카드와 상품 상세 이미지의 대체 텍스트로 사용합니다.
+
 ### 리뷰 키워드
+
+`FIT_REVIEW.fit_preference`는 리뷰 작성 시점의 선호 핏 스냅샷입니다. 사용자가 이후 체형 프로필의 선호 핏을 변경해도 과거 리뷰의 기대 핏 해석이 바뀌지 않도록 리뷰에 저장합니다.
 
 `FitReview` 타입의 `positiveKeywords`, `negativeKeywords` 배열은 DB에서는 `REVIEW_KEYWORD` 테이블로 분리합니다.
 
@@ -429,7 +449,7 @@ keyword: string
 
 `ReviewSummary.basisReviewIds`는 DB에서 `REVIEW_SUMMARY_BASIS` 연결 테이블로 관리합니다.
 
-사용자 화면에는 리뷰 ID를 노출하지 않고 다음 정보만 표시합니다.
+사용자 API와 화면에는 리뷰 ID를 노출하지 않고 `ReviewSummaryResponse` 형태로 다음 정보만 제공합니다.
 
 - 요약에 사용된 리뷰 수
 - 체형 조건
@@ -455,7 +475,9 @@ keyword: string
 
 ### 주문번호
 
-`ORDER.order_id`는 내부 식별자입니다. 사용자 화면과 고객센터 문의에는 `ORDER.order_number`를 표시합니다.
+`ORDER.order_id`는 내부 식별자입니다. 사용자 화면, 주문 상세 URL, 고객센터 문의에는 `ORDER.order_number`를 표시합니다.
+
+`order_number` 분리는 보안 경계가 아니라 사용자 경험과 내부 식별자 보호를 위한 설계입니다. 권한 검사는 반드시 현재 사용자와 주문 소유자를 함께 확인해야 합니다.
 
 예시:
 
