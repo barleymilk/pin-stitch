@@ -1,0 +1,679 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+enum BodyShape {
+  STRAIGHT
+  WAVE
+  NATURAL
+  UNKNOWN
+}
+
+enum FitPreference {
+  SLIM
+  REGULAR
+  LOOSE
+}
+
+enum ApparelSize {
+  XS
+  S
+  M
+  L
+  XL
+  FREE
+}
+
+enum ProductCategory {
+  OUTER
+  TOP
+  BOTTOM
+  DRESS
+  SKIRT
+  KNIT
+}
+
+enum ProductFit {
+  SLIM
+  REGULAR
+  LOOSE
+  OVERSIZED
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+enum FitResult {
+  SMALL
+  TRUE_TO_SIZE
+  LARGE
+}
+
+enum KeywordSentiment {
+  POSITIVE
+  NEGATIVE
+}
+
+enum CouponDiscountType {
+  FIXED_AMOUNT
+  PERCENTAGE
+}
+
+enum CouponTargetType {
+  ORDER
+  PRODUCT
+  CATEGORY
+  BRAND
+}
+
+enum ExcludedCouponReasonCode {
+  EXPIRED
+  NOT_STARTED
+  MIN_ORDER_AMOUNT_NOT_MET
+  TARGET_NOT_MATCHED
+  NOT_STACKABLE
+  NO_DISCOUNT
+}
+
+enum OrderStatus {
+  PAYMENT_PENDING
+  PAID
+  PAYMENT_FAILED
+  ORDER_CREATED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  TOSS_PAYMENTS
+}
+
+enum PaymentStatus {
+  READY
+  IN_PROGRESS
+  APPROVED
+  FAILED
+  CANCELED
+}
+
+enum DeliveryStatus {
+  PREPARING
+  IN_TRANSIT
+  DELIVERED
+  DELAYED
+  DELIVERY_FAILED
+}
+
+enum ReturnReasonCode {
+  SIZE_TOO_SMALL
+  SIZE_TOO_LARGE
+  SHOULDER_FIT
+  WAIST_FIT
+  LENGTH_FIT
+  COLOR_DIFFERENCE
+  MATERIAL_EXPECTATION
+}
+
+enum InsightSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum SellerInsightType {
+  DETAIL_PAGE_IMPROVEMENT
+  SIZE_GUIDE_IMPROVEMENT
+  OPTION_IMPROVEMENT
+  TARGETING_OPPORTUNITY
+}
+
+model User {
+  userId    String   @id @map("user_id")
+  role      UserRole
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bodyProfile     BodyProfile?
+  fitReviews      FitReview[]
+  coupons         Coupon[]
+  carts           Cart[]
+  orders          CustomerOrder[]
+  returnReasons   ReturnReason[]
+  analyticsEvents AnalyticsEvent[]
+
+  @@map("users")
+}
+
+model BodyProfile {
+  bodyProfileId        String        @id @map("body_profile_id")
+  userId               String        @unique @map("user_id")
+  heightCm             Int           @map("height_cm")
+  weightKg             Int?          @map("weight_kg")
+  topSize              ApparelSize   @map("top_size")
+  bottomSize           ApparelSize   @map("bottom_size")
+  bodyShape            BodyShape     @map("body_shape")
+  fitPreference        FitPreference @map("fit_preference")
+  consentToUseBodyData Boolean       @map("consent_to_use_body_data")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+
+  user            User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  reviewSummaries ReviewSummary[]
+
+  @@map("body_profiles")
+}
+
+model Product {
+  productId     String          @id @map("product_id")
+  brandId       String          @map("brand_id")
+  brandName     String          @map("brand_name")
+  name          String
+  description   String
+  category      ProductCategory
+  material      String
+  fit           ProductFit
+  priceAmount   Int             @map("price_amount")
+  priceCurrency String          @default("KRW") @map("price_currency")
+  status        ProductStatus
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  images           ProductImage[]
+  variants         ProductVariant[]
+  sizeMeasurements SizeMeasurement[]
+  fitReviews       FitReview[]
+  reviewSummaries  ReviewSummary[]
+  storeInventories StoreInventory[]
+  cartItems        CartItem[]
+  orderLines       OrderLine[]
+  returnReasons    ReturnReason[]
+  sellerInsights   SellerInsight[]
+  analyticsEvents  AnalyticsEvent[]
+
+  @@index([category])
+  @@index([brandId])
+  @@index([status])
+  @@map("products")
+}
+
+model ProductImage {
+  productImageId String   @id @map("product_image_id")
+  productId      String   @map("product_id")
+  s3Key          String   @map("s3_key")
+  url            String
+  altText        String   @map("alt_text")
+  sortOrder      Int      @map("sort_order")
+  width          Int?
+  height         Int?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  @@index([productId, sortOrder])
+  @@map("product_images")
+}
+
+model ProductVariant {
+  variantId         String      @id @map("variant_id")
+  productId         String      @map("product_id")
+  sku               String      @unique
+  color             String
+  size              ApparelSize
+  availableQuantity Int         @map("available_quantity")
+
+  product          Product          @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  fitReviews       FitReview[]
+  storeInventories StoreInventory[]
+  cartItems        CartItem[]
+  orderLines       OrderLine[]
+  returnReasons    ReturnReason[]
+
+  @@index([productId])
+  @@index([productId, color, size])
+  @@map("product_variants")
+}
+
+model SizeMeasurement {
+  sizeMeasurementId String      @id @map("size_measurement_id")
+  productId         String      @map("product_id")
+  size              ApparelSize
+  shoulderCm        Decimal?    @map("shoulder_cm") @db.Decimal(5, 2)
+  chestCm           Decimal?    @map("chest_cm") @db.Decimal(5, 2)
+  waistCm           Decimal?    @map("waist_cm") @db.Decimal(5, 2)
+  hipCm             Decimal?    @map("hip_cm") @db.Decimal(5, 2)
+  thighCm           Decimal?    @map("thigh_cm") @db.Decimal(5, 2)
+  lengthCm          Decimal?    @map("length_cm") @db.Decimal(5, 2)
+  sleeveCm          Decimal?    @map("sleeve_cm") @db.Decimal(5, 2)
+
+  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  @@unique([productId, size])
+  @@map("size_measurements")
+}
+
+model FitReview {
+  reviewId      String         @id @map("review_id")
+  userId        String         @map("user_id")
+  productId     String         @map("product_id")
+  variantId     String         @map("variant_id")
+  rating        Int
+  content       String
+  heightCm      Int?           @map("height_cm")
+  bodyShape     BodyShape?     @map("body_shape")
+  fitPreference FitPreference? @map("fit_preference")
+  purchasedSize ApparelSize    @map("purchased_size")
+  fitResult     FitResult      @map("fit_result")
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  user               User                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  product            Product              @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  variant            ProductVariant       @relation(fields: [variantId], references: [variantId], onDelete: Restrict)
+  keywords           ReviewKeyword[]
+  images             ReviewImage[]
+  reviewSummaryBasis ReviewSummaryBasis[]
+
+  @@index([productId])
+  @@index([variantId])
+  @@index([heightCm])
+  @@index([bodyShape, fitPreference, purchasedSize, fitResult])
+  @@map("fit_reviews")
+}
+
+model ReviewKeyword {
+  reviewKeywordId String           @id @map("review_keyword_id")
+  reviewId        String           @map("review_id")
+  sentiment       KeywordSentiment
+  keyword         String
+
+  review FitReview @relation(fields: [reviewId], references: [reviewId], onDelete: Cascade)
+
+  @@index([keyword])
+  @@index([sentiment, keyword])
+  @@map("review_keywords")
+}
+
+model ReviewImage {
+  reviewImageId String   @id @map("review_image_id")
+  reviewId      String   @map("review_id")
+  s3Key         String   @map("s3_key")
+  url           String
+  altText       String   @map("alt_text")
+  sortOrder     Int      @map("sort_order")
+  width         Int?
+  height        Int?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  review FitReview @relation(fields: [reviewId], references: [reviewId], onDelete: Cascade)
+
+  @@index([reviewId, sortOrder])
+  @@map("review_images")
+}
+
+model ReviewSummary {
+  reviewSummaryId    String   @id @map("review_summary_id")
+  productId          String   @map("product_id")
+  variantId          String?  @map("variant_id")
+  bodyProfileId      String?  @map("body_profile_id")
+  summary            String
+  matchedReviewCount Int      @map("matched_review_count")
+  generatedAt        DateTime @default(now()) @map("generated_at")
+
+  product     Product                @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  bodyProfile BodyProfile?           @relation(fields: [bodyProfileId], references: [bodyProfileId], onDelete: SetNull)
+  basis       ReviewSummaryBasis[]
+  warnings    ReviewSummaryWarning[]
+
+  @@index([productId, variantId, bodyProfileId])
+  @@map("review_summaries")
+}
+
+model ReviewSummaryBasis {
+  reviewSummaryId String @map("review_summary_id")
+  reviewId        String @map("review_id")
+
+  reviewSummary ReviewSummary @relation(fields: [reviewSummaryId], references: [reviewSummaryId], onDelete: Cascade)
+  review        FitReview     @relation(fields: [reviewId], references: [reviewId], onDelete: Cascade)
+
+  @@id([reviewSummaryId, reviewId])
+  @@map("review_summary_basis")
+}
+
+model ReviewSummaryWarning {
+  reviewSummaryWarningId String @id @map("review_summary_warning_id")
+  reviewSummaryId        String @map("review_summary_id")
+  warning                String
+  sortOrder              Int    @map("sort_order")
+
+  reviewSummary ReviewSummary @relation(fields: [reviewSummaryId], references: [reviewSummaryId], onDelete: Cascade)
+
+  @@index([reviewSummaryId, sortOrder])
+  @@map("review_summary_warnings")
+}
+
+model Store {
+  storeId String  @id @map("store_id")
+  name    String
+  address String
+  lat     Decimal @db.Decimal(9, 6)
+  lng     Decimal @db.Decimal(9, 6)
+  isOpen  Boolean @map("is_open")
+
+  inventories StoreInventory[]
+
+  @@map("stores")
+}
+
+model StoreInventory {
+  storeInventoryId String   @id @map("store_inventory_id")
+  storeId          String   @map("store_id")
+  productId        String   @map("product_id")
+  variantId        String   @map("variant_id")
+  quantity         Int
+  floor            String
+  zone             String
+  rack             String
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  store   Store          @relation(fields: [storeId], references: [storeId], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [productId], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [variantId], onDelete: Cascade)
+
+  @@unique([storeId, variantId])
+  @@index([productId])
+  @@map("store_inventories")
+}
+
+model Coupon {
+  couponId          String             @id @map("coupon_id")
+  userId            String?            @map("user_id")
+  name              String
+  discountType      CouponDiscountType @map("discount_type")
+  discountValue     Decimal            @map("discount_value") @db.Decimal(10, 2)
+  maxDiscountAmount Int?               @map("max_discount_amount")
+  minOrderAmount    Int?               @map("min_order_amount")
+  targetType        CouponTargetType   @map("target_type")
+  stackable         Boolean
+  startsAt          DateTime           @map("starts_at")
+  endsAt            DateTime           @map("ends_at")
+
+  user                    User?                    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  targets                 CouponTarget[]
+  cartApplications        CartCouponApplication[]
+  cartExcludedCoupons     CartExcludedCoupon[]
+  orderCouponApplications OrderCouponApplication[]
+
+  @@index([userId])
+  @@index([startsAt, endsAt])
+  @@map("coupons")
+}
+
+model CouponTarget {
+  couponTargetId String @id @map("coupon_target_id")
+  couponId       String @map("coupon_id")
+  targetId       String @map("target_id")
+
+  coupon Coupon @relation(fields: [couponId], references: [couponId], onDelete: Cascade)
+
+  @@index([couponId])
+  @@map("coupon_targets")
+}
+
+model Cart {
+  cartId              String   @id @map("cart_id")
+  userId              String   @map("user_id")
+  subtotalAmount      Int      @default(0) @map("subtotal_amount")
+  discountTotalAmount Int      @default(0) @map("discount_total_amount")
+  finalTotalAmount    Int      @default(0) @map("final_total_amount")
+  currency            String   @default("KRW")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  user               User                    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  items              CartItem[]
+  couponApplications CartCouponApplication[]
+  excludedCoupons    CartExcludedCoupon[]
+
+  @@index([userId])
+  @@map("carts")
+}
+
+model CartItem {
+  cartItemId        String @id @map("cart_item_id")
+  cartId            String @map("cart_id")
+  productId         String @map("product_id")
+  variantId         String @map("variant_id")
+  quantity          Int
+  unitPriceAmount   Int    @map("unit_price_amount")
+  unitPriceCurrency String @default("KRW") @map("unit_price_currency")
+  lineTotalAmount   Int    @map("line_total_amount")
+  lineTotalCurrency String @default("KRW") @map("line_total_currency")
+
+  cart               Cart                    @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+  product            Product                 @relation(fields: [productId], references: [productId], onDelete: Restrict)
+  variant            ProductVariant          @relation(fields: [variantId], references: [variantId], onDelete: Restrict)
+  couponApplications CartCouponApplication[]
+
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_items")
+}
+
+model CartCouponApplication {
+  cartCouponApplicationId String  @id @map("cart_coupon_application_id")
+  cartId                  String  @map("cart_id")
+  couponId                String  @map("coupon_id")
+  cartItemId              String? @map("cart_item_id")
+  discountAmount          Int     @map("discount_amount")
+  discountCurrency        String  @default("KRW") @map("discount_currency")
+  reason                  String
+
+  cart     Cart      @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+  coupon   Coupon    @relation(fields: [couponId], references: [couponId], onDelete: Restrict)
+  cartItem CartItem? @relation(fields: [cartItemId], references: [cartItemId], onDelete: Cascade)
+
+  @@index([cartId])
+  @@map("cart_coupon_applications")
+}
+
+model CartExcludedCoupon {
+  cartExcludedCouponId String                   @id @map("cart_excluded_coupon_id")
+  cartId               String                   @map("cart_id")
+  couponId             String                   @map("coupon_id")
+  reasonCode           ExcludedCouponReasonCode @map("reason_code")
+  message              String
+
+  cart   Cart   @relation(fields: [cartId], references: [cartId], onDelete: Cascade)
+  coupon Coupon @relation(fields: [couponId], references: [couponId], onDelete: Restrict)
+
+  @@index([cartId])
+  @@map("cart_excluded_coupons")
+}
+
+model CustomerOrder {
+  orderId             String      @id @map("order_id")
+  orderNumber         String      @unique @map("order_number")
+  userId              String      @map("user_id")
+  status              OrderStatus
+  recipientName       String      @map("recipient_name")
+  phone               String
+  postalCode          String      @map("postal_code")
+  address1            String
+  address2            String?
+  subtotalAmount      Int         @map("subtotal_amount")
+  discountTotalAmount Int         @map("discount_total_amount")
+  finalTotalAmount    Int         @map("final_total_amount")
+  currency            String      @default("KRW")
+  createdAt           DateTime    @default(now()) @map("created_at")
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+
+  user               User                     @relation(fields: [userId], references: [userId], onDelete: Restrict)
+  lines              OrderLine[]
+  couponApplications OrderCouponApplication[]
+  payments           Payment[]
+  shipments          Shipment[]
+  returnReasons      ReturnReason[]
+  analyticsEvents    AnalyticsEvent[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("orders")
+}
+
+model OrderLine {
+  orderLineId     String @id @map("order_line_id")
+  orderId         String @map("order_id")
+  productId       String @map("product_id")
+  variantId       String @map("variant_id")
+  quantity        Int
+  unitPriceAmount Int    @map("unit_price_amount")
+  lineTotalAmount Int    @map("line_total_amount")
+  currency        String @default("KRW")
+
+  order              CustomerOrder            @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  product            Product                  @relation(fields: [productId], references: [productId], onDelete: Restrict)
+  variant            ProductVariant           @relation(fields: [variantId], references: [variantId], onDelete: Restrict)
+  couponApplications OrderCouponApplication[]
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_lines")
+}
+
+model OrderCouponApplication {
+  orderCouponApplicationId String  @id @map("order_coupon_application_id")
+  orderId                  String  @map("order_id")
+  couponId                 String  @map("coupon_id")
+  orderLineId              String? @map("order_line_id")
+  discountAmount           Int     @map("discount_amount")
+  discountCurrency         String  @default("KRW") @map("discount_currency")
+  reason                   String
+
+  order     CustomerOrder @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  coupon    Coupon        @relation(fields: [couponId], references: [couponId], onDelete: Restrict)
+  orderLine OrderLine?    @relation(fields: [orderLineId], references: [orderLineId], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_coupon_applications")
+}
+
+model Payment {
+  paymentId          String          @id @map("payment_id")
+  orderId            String          @map("order_id")
+  orderNumber        String          @map("order_number")
+  provider           PaymentProvider
+  status             PaymentStatus
+  amount             Int
+  currency           String          @default("KRW")
+  providerOrderId    String          @map("provider_order_id")
+  providerPaymentKey String?         @unique @map("provider_payment_key")
+  method             String?
+  receiptUrl         String?         @map("receipt_url")
+  requestedAt        DateTime        @map("requested_at")
+  approvedAt         DateTime?       @map("approved_at")
+  failedAt           DateTime?       @map("failed_at")
+  failureCode        String?         @map("failure_code")
+  failureMessage     String?         @map("failure_message")
+  canceledAt         DateTime?       @map("canceled_at")
+  cancelReason       String?         @map("cancel_reason")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+
+  order CustomerOrder @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+
+  @@index([orderNumber])
+  @@index([status])
+  @@map("payments")
+}
+
+model Shipment {
+  shipmentId            String         @id @map("shipment_id")
+  orderId               String         @map("order_id")
+  orderNumber           String         @map("order_number")
+  status                DeliveryStatus
+  carrierName           String?        @map("carrier_name")
+  trackingNumber        String?        @map("tracking_number")
+  trackingUrl           String?        @map("tracking_url")
+  estimatedDeliveryDate DateTime?      @map("estimated_delivery_date") @db.Date
+  shippedAt             DateTime?      @map("shipped_at")
+  deliveredAt           DateTime?      @map("delivered_at")
+  delayedAt             DateTime?      @map("delayed_at")
+  delayReason           String?        @map("delay_reason")
+  lastCheckedAt         DateTime?      @map("last_checked_at")
+  createdAt             DateTime       @default(now()) @map("created_at")
+  updatedAt             DateTime       @updatedAt @map("updated_at")
+
+  order CustomerOrder @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+
+  @@index([orderNumber])
+  @@index([status, updatedAt])
+  @@map("shipments")
+}
+
+model ReturnReason {
+  returnReasonId String           @id @map("return_reason_id")
+  orderId        String           @map("order_id")
+  productId      String           @map("product_id")
+  variantId      String           @map("variant_id")
+  userId         String           @map("user_id")
+  reasonCode     ReturnReasonCode @map("reason_code")
+  memo           String?
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  order   CustomerOrder  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [productId], onDelete: Restrict)
+  variant ProductVariant @relation(fields: [variantId], references: [variantId], onDelete: Restrict)
+  user    User           @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([productId, reasonCode])
+  @@index([orderId])
+  @@map("return_reasons")
+}
+
+model SellerInsight {
+  insightId String            @id @map("insight_id")
+  productId String            @map("product_id")
+  type      SellerInsightType
+  severity  InsightSeverity
+  message   String
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [productId], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([severity])
+  @@map("seller_insights")
+}
+
+model AnalyticsEvent {
+  analyticsEventId String   @id @map("analytics_event_id")
+  userId           String?  @map("user_id")
+  sessionId        String   @map("session_id")
+  eventName        String   @map("event_name")
+  productId        String?  @map("product_id")
+  orderId          String?  @map("order_id")
+  metadata         Json
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user    User?          @relation(fields: [userId], references: [userId], onDelete: SetNull)
+  product Product?       @relation(fields: [productId], references: [productId], onDelete: SetNull)
+  order   CustomerOrder? @relation(fields: [orderId], references: [orderId], onDelete: SetNull)
+
+  @@index([eventName, createdAt])
+  @@index([userId])
+  @@map("analytics_events")
+}

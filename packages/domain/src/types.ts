@@ -9,6 +9,8 @@ export type CartItemId = `cart_item_${string}`;
 export type CouponId = `cpn_${string}`;
 export type OrderId = `ord_${string}`;
 export type OrderNumber = string;
+export type PaymentId = `pay_${string}`;
+export type ShipmentId = `ship_${string}`;
 export type ReturnReasonId = `ret_${string}`;
 export type InsightId = `ins_${string}`;
 
@@ -306,6 +308,9 @@ export interface ShippingAddress {
 }
 
 export type OrderStatus =
+  | "PAYMENT_PENDING"
+  | "PAID"
+  | "PAYMENT_FAILED"
   | "ORDER_CREATED"
   | "PREPARING"
   | "SHIPPED"
@@ -331,6 +336,80 @@ export interface Order {
   status: OrderStatus;
   createdAt: ISODateTime;
   updatedAt: ISODateTime;
+}
+
+export type PaymentProvider = "TOSS_PAYMENTS";
+export type PaymentStatus =
+  | "READY"
+  | "IN_PROGRESS"
+  | "APPROVED"
+  | "FAILED"
+  | "CANCELED";
+
+export interface Payment {
+  paymentId: PaymentId;
+  orderId: OrderId;
+  orderNumber: OrderNumber;
+  provider: PaymentProvider;
+  status: PaymentStatus;
+  amount: Money;
+  providerOrderId: string;
+  providerPaymentKey?: string;
+  method?: string;
+  receiptUrl?: string;
+  requestedAt: ISODateTime;
+  approvedAt?: ISODateTime;
+  failedAt?: ISODateTime;
+  failureCode?: string;
+  failureMessage?: string;
+  canceledAt?: ISODateTime;
+  cancelReason?: string;
+  createdAt: ISODateTime;
+  updatedAt: ISODateTime;
+}
+
+export interface TossPaymentConfirmRequest {
+  paymentKey: string;
+  orderId: string;
+  amount: number;
+}
+
+export interface PaymentConfirmResponse {
+  orderNumber: OrderNumber;
+  orderStatus: OrderStatus;
+  payment: Payment;
+}
+
+export type DeliveryStatus =
+  | "PREPARING"
+  | "IN_TRANSIT"
+  | "DELIVERED"
+  | "DELAYED"
+  | "DELIVERY_FAILED";
+
+export interface Shipment {
+  shipmentId: ShipmentId;
+  orderId: OrderId;
+  orderNumber: OrderNumber;
+  status: DeliveryStatus;
+  carrierName?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  estimatedDeliveryDate?: string;
+  shippedAt?: ISODateTime;
+  deliveredAt?: ISODateTime;
+  delayedAt?: ISODateTime;
+  delayReason?: string;
+  lastCheckedAt?: ISODateTime;
+  createdAt: ISODateTime;
+  updatedAt: ISODateTime;
+}
+
+export interface DelayedShipment {
+  shipment: Shipment;
+  delayDays: number;
+  reason: string;
+  compensationIssued: boolean;
 }
 
 export type ReturnReasonCode =

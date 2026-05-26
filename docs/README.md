@@ -1,75 +1,91 @@
 # pin-stitch 문서 안내
 
-`pin-stitch`는 사용자의 체형 정보와 실제 구매 리뷰를 연결해 패션 상품 구매 실패를 줄이는 맞춤형 패션 커머스 MVP입니다. 고객은 나와 비슷한 체형의 리뷰, 체형 적합도, 사이즈/핏 주의사항을 보고 상품을 고르고, 셀러는 리뷰와 반품 데이터를 상품 개선 인사이트로 확인합니다.
+`pin-stitch`는 체형 정보와 실제 구매 리뷰를 연결해 패션 상품 구매 실패를 줄이는 맞춤형 패션 커머스 MVP입니다.
 
-## 문서 구성
+문서는 목적별로 나눴습니다. 처음 읽을 때는 아래의 "핵심 문서"만 보면 되고, 화면 구현 단계에서만 상세 화면 문서를 열면 됩니다.
+
+## 핵심 문서
 
 | 문서 | 목적 |
 | --- | --- |
-| [product-requirements.md](./product-requirements.md) | 제품 목표, 사용자, MVP 범위, 성공 지표 |
-| [implementation-guide.md](./implementation-guide.md) | 기술 스택, 앱/패키지 구조, 구현 순서, 도메인 로직 기준 |
-| [tech-stack.md](./tech-stack.md) | 프로젝트에서 사용할 기술 스택과 인프라 구성 |
-| [erd.md](./erd.md) | MVP 데이터 모델과 엔티티 관계 |
-| [api-reference.md](./api-reference.md) | NestJS API 엔드포인트, 응답 규칙, 상태 코드 |
-| [ui-guidelines.md](./ui-guidelines.md) | 화면별 요구사항, 디자인 토큰, UI/접근성 기준 |
-| [screen-design-plan.md](./screen-design-plan.md) | 고객 핵심 플로우 화면 설계, 컴포넌트, 상태, CTA |
-| [seller-screen-design-plan.md](./seller-screen-design-plan.md) | 셀러 분석 플로우 화면 설계, 지표, 차트, 인사이트 |
-| [component-inventory.md](./component-inventory.md) | 고객/셀러 공통 컴포넌트 목록, 우선순위, 구현 순서 |
-| [home-screen-design.md](./home-screen-design.md) | 홈 화면 `/` 상세 디자인 명세 |
-| [product-list-screen-design.md](./product-list-screen-design.md) | 상품 목록 화면 `/products` 상세 디자인 명세 |
-| [product-detail-screen-design.md](./product-detail-screen-design.md) | 상품 상세 화면 `/products/:productId` 상세 디자인 명세 |
-| [archive-2026-05-19](./archive-2026-05-19/) | 정리 전 원본 문서 보관본 |
+| [제품 요구사항](./product/product-requirements.md) | 제품 목표, 사용자, MVP 범위, 성공 지표 |
+| [구현 가이드](./architecture/implementation-guide.md) | 앱 구조, 구현 순서, 도메인 로직, seed 데이터 기준 |
+| [ERD](./architecture/erd.md) | 데이터 모델과 엔티티 관계 |
+| [API 명세](./architecture/api-reference.md) | 고객/셀러 API, 응답 규칙, 상태 코드 |
+| [UI 가이드](./design/ui-guidelines.md) | 디자인 원칙, 토큰, 접근성, 화면별 공통 기준 |
 
-## 권장 읽기 순서
+## 폴더 구조
 
-1. 제품 방향과 범위를 확인하려면 `product-requirements.md`
-2. 바로 구현을 시작하려면 `implementation-guide.md`
-3. 화면과 API를 연결할 때 `api-reference.md`
-4. 고객 핵심 플로우를 디자인할 때 `screen-design-plan.md`
-5. 셀러 분석 화면을 디자인할 때 `seller-screen-design-plan.md`
-6. 컴포넌트 단위를 정리할 때 `component-inventory.md`
-7. 홈 화면을 상세 설계할 때 `home-screen-design.md`
-8. 상품 목록 화면을 상세 설계할 때 `product-list-screen-design.md`
-9. 상품 상세 화면을 상세 설계할 때 `product-detail-screen-design.md`
-10. UI를 만들거나 검수할 때 `ui-guidelines.md`
+```text
+docs/
+  product/
+    product-requirements.md
+  architecture/
+    api-reference.md
+    erd.md
+    implementation-guide.md
+    payment-flow-design.md
+    tech-stack.md
+  design/
+    ui-guidelines.md
+    component-inventory.md
+    screen-design-plan.md
+    seller-screen-design-plan.md
+    customer/
+      *-screen-design.md
+    seller/
+      *-screen-design.md
+  integrations/
+    mcp-delivery-integration.md
+```
 
-## MVP P0 범위
+## 제품/기획
 
-### 고객 웹
+- [제품 요구사항](./product/product-requirements.md): 문제 정의, MVP 범위, 고객/셀러 핵심 시나리오
 
-- 체형 프로필 등록/수정
-- 상품 목록, 검색, 필터, 정렬
-- 상품 상세
-- 체형별 리뷰 필터링
-- 체형 기반 리뷰 요약
-- 체형 적합도 점수
-- 사이즈/핏 주의사항
-- 샘플 매장 재고 안내
-- 장바구니
-- 쿠폰 자동 최적 적용
-- 주문 생성, 주문 완료, 주문 내역
+## 아키텍처/API
 
-### 셀러 웹
+- [구현 가이드](./architecture/implementation-guide.md): 구현 전략, 앱/패키지 구조, 도메인 로직, seed 데이터 기준
+- [기술 스택](./architecture/tech-stack.md): Next.js, NestJS, Prisma, PostgreSQL 등 확정 기술
+- [ERD](./architecture/erd.md): 테이블, 관계, 인덱스, 결제/배송/리뷰 모델
+- [API 명세](./architecture/api-reference.md): API 엔드포인트와 DTO 기준
+- [결제 흐름](./architecture/payment-flow-design.md): 토스페이먼츠 승인, 실패, 취소, Payment 엔티티
 
-- 셀러 대시보드
-- 상품별 체형 만족도 분석
-- 사이즈별 핏 평가 분포
-- 긍정/부정 리뷰 키워드 분석
-- 반품 사유 분석
-- 상품 개선 인사이트
+## 디자인 공통
 
-## 현재 코드 상태
+- [UI 가이드](./design/ui-guidelines.md): 색상, 타이포그래피, 접근성, 상태 화면 기준
+- [컴포넌트 인벤토리](./design/component-inventory.md): 공통/고객/셀러 컴포넌트와 구현 우선순위
+- [고객 화면 설계 요약](./design/screen-design-plan.md): 고객 핵심 플로우 전체 지도
+- [셀러 화면 설계 요약](./design/seller-screen-design-plan.md): 셀러 분석 플로우 전체 지도
 
-현재 저장소에는 `packages/domain` 패키지와 공통 타입 파일이 있습니다.
+## 고객 화면 상세
 
-- `packages/domain/src/types.ts`: 사용자, 체형, 상품, 리뷰, 재고, 쿠폰, 장바구니, 주문, 반품, 셀러 인사이트, API 응답 타입
-- `packages/domain/src/index.ts`: 도메인 타입 export
+- [홈](./design/customer/home-screen-design.md): `/`
+- [체형 프로필](./design/customer/body-profile-screen-design.md): `/profile/body`
+- [상품 목록](./design/customer/product-list-screen-design.md): `/products`
+- [상품 상세](./design/customer/product-detail-screen-design.md): `/products/:productId`
+- [리뷰 탐색](./design/customer/review-exploration-screen-design.md): `/products/:productId/reviews`
+- [매장 재고](./design/customer/store-inventory-screen-design.md): `/products/:productId/stores`
+- [장바구니](./design/customer/cart-screen-design.md): `/cart`
+- [주문 생성](./design/customer/checkout-screen-design.md): `/checkout`
+- [결제 리다이렉트](./design/customer/payment-redirect-screen-design.md): `/payments/toss/success`, `/payments/toss/fail`
+- [주문 상세](./design/customer/order-detail-screen-design.md): `/orders/:orderNumber`
+- [주문 내역](./design/customer/order-history-screen-design.md): `/me/orders`
 
-다음 구현의 첫 작업은 `packages/domain` 계산 로직, Prisma schema, seed 데이터를 추가하는 것입니다.
+## 셀러 화면 상세
+
+- [셀러 대시보드](./design/seller/seller-dashboard-screen-design.md): `/seller`
+- [상품 분석](./design/seller/seller-product-analysis-screen-design.md): `/seller/products/:productId`
+- [리뷰 분석](./design/seller/seller-review-analysis-screen-design.md): `/seller/reviews`
+- [반품 분석](./design/seller/seller-return-analysis-screen-design.md): `/seller/returns`
+
+## MCP/확장
+
+- [MCP 배송 자동화 연동](./integrations/mcp-delivery-integration.md): 배송 지연 감지, 보상 쿠폰, 교환/반품 자동화 시나리오
 
 ## 문서 관리 원칙
 
-- 제품 범위 변경은 `product-requirements.md`에 먼저 반영합니다.
-- 타입, 계산 로직, 라우팅, API 구현 방식 변경은 `implementation-guide.md`와 `api-reference.md`를 함께 갱신합니다.
-- 화면 구성, 디자인 토큰, 접근성 기준 변경은 `ui-guidelines.md`에 반영합니다.
-- 이전 문서는 삭제하지 않고 날짜가 포함된 archive 폴더에 보관합니다.
+- 제품 범위 변경은 `product/product-requirements.md`에 먼저 반영합니다.
+- DB/API 변경은 `architecture/erd.md`, `architecture/api-reference.md`, `architecture/implementation-guide.md`를 함께 갱신합니다.
+- 화면 기준 변경은 `design/ui-guidelines.md`와 해당 `design/customer` 또는 `design/seller` 상세 문서를 함께 갱신합니다.
+- 오래된 초안과 중복 문서는 보관하지 않고 삭제합니다. 필요한 결정 사항만 최신 문서에 남깁니다.
