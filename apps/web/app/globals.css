@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "@pin-stitch/ui/styles";
+
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+html,
+body {
+  max-width: 100vw;
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

@@ -20,8 +20,8 @@
     "prisma:format": "prisma format --schema apps/api/prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
     "prisma:seed": "prisma db seed --schema apps/api/prisma/schema.prisma",
-    "dev:api": "npm --workspace @pin-stitch/api run dev",
-    "dev:web": "npm --workspace @pin-stitch/web run dev"
+    "dev:api": "pnpm --filter @pin-stitch/api dev",
+    "dev:web": "pnpm --filter @pin-stitch/web dev"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
