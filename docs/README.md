@@ -58,6 +58,10 @@ docs/
 - [고객 화면 설계 요약](./design/screen-design-plan.md): 고객 핵심 플로우 전체 지도
 - [셀러 화면 설계 요약](./design/seller-screen-design-plan.md): 셀러 분석 플로우 전체 지도
 
+## 품질/QA
+
+- [QA 전략](./qa-strategy.md): Vitest, Playwright, Lighthouse, 접근성, CI/CD 품질 게이트 기준
+
 ## 고객 화면 상세
 
 - [홈](./design/customer/home-screen-design.md): `/`
@@ -88,4 +92,5 @@ docs/
 - 제품 범위 변경은 `product/product-requirements.md`에 먼저 반영합니다.
 - DB/API 변경은 `architecture/erd.md`, `architecture/api-reference.md`, `architecture/implementation-guide.md`를 함께 갱신합니다.
 - 화면 기준 변경은 `design/ui-guidelines.md`와 해당 `design/customer` 또는 `design/seller` 상세 문서를 함께 갱신합니다.
+- QA/테스트 기준 변경은 `qa-strategy.md`를 함께 갱신합니다.
 - 오래된 초안과 중복 문서는 보관하지 않고 삭제합니다. 필요한 결정 사항만 최신 문서에 남깁니다.

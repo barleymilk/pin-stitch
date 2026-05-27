@@ -3,11 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@9.15.4",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
+    "typecheck": "tsc -b",
+    "lint": "eslint .",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "build": "tsc -b",
     "prisma:validate": "prisma validate --schema apps/api/prisma/schema.prisma",
     "prisma:format": "prisma format --schema apps/api/prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
@@ -16,8 +24,16 @@
     "dev:web": "npm --workspace @pin-stitch/web run dev"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/node": "^22.15.19",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.5.3",
     "prisma": "^6.0.0",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
+    "vitest": "^3.1.4"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0"

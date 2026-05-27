@@ -50,13 +50,7 @@ export interface BodyProfile {
   updatedAt: ISODateTime;
 }
 
-export type ProductCategory =
-  | "OUTER"
-  | "TOP"
-  | "BOTTOM"
-  | "DRESS"
-  | "SKIRT"
-  | "KNIT";
+export type ProductCategory = "OUTER" | "TOP" | "BOTTOM" | "DRESS" | "SKIRT" | "KNIT";
 
 export type ProductFit = "SLIM" | "REGULAR" | "LOOSE" | "OVERSIZED";
 export type ProductStatus = "ACTIVE" | "DRAFT" | "ARCHIVED";
