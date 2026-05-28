@@ -1,0 +1,30 @@
+{
+  "Next.js / React function component": {
+    "prefix": "rsf",
+    "scope": "typescriptreact,javascriptreact",
+    "description": "pin-stitch: React function component (not React Native)",
+    "body": [
+      "type ${1:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}}Props = {};",
+      "",
+      "export function ${1}(_props: ${1}Props) {",
+      "  return <section className=\"\"></section>;",
+      "}",
+      "$0"
+    ]
+  },
+  "Next.js client component": {
+    "prefix": "rsfc",
+    "scope": "typescriptreact,javascriptreact",
+    "description": "pin-stitch: client component with use client",
+    "body": [
+      "\"use client\";",
+      "",
+      "type ${1:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/}}Props = {};",
+      "",
+      "export function ${1}(_props: ${1}Props) {",
+      "  return <section className=\"\"></section>;",
+      "}",
+      "$0"
+    ]
+  }
+}

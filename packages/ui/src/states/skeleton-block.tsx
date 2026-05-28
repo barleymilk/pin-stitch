@@ -22,7 +22,7 @@ export function SkeletonBlock({
 }: SkeletonBlockProps) {
   return (
     <div
-      className={cn("animate-pulse bg-surface-muted", radiusMap[radius], className)}
+      className={cn("animate-pulse bg-skeleton", radiusMap[radius], className)}
       style={{ width, height }}
       aria-hidden
     />

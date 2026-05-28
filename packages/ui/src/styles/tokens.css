@@ -1,7 +1,7 @@
 @theme {
   /* Colors — docs/design/ui-guidelines.md */
   --color-bg: #ffffff;
-  --color-bg-subtle: #f7f7f5;
+  --color-bg-subtle: #f8f9fa;
   --color-surface: #ffffff;
   --color-surface-muted: #f1f2ee;
   --color-text: #171717;
@@ -9,17 +9,18 @@
   --color-text-subtle: #9a9a92;
   --color-border: #e2e2dc;
   --color-border-strong: #c9c9c0;
-  --color-primary: #1e3a34;
-  --color-primary-hover: #162b27;
-  --color-accent: #b86b4b;
+  --color-primary: #1c1c1c;
+  --color-primary-hover: #000000;
+  --color-accent: #d00000;
   --color-info: #3b6ea8;
   --color-success: #2f7d55;
   --color-warning: #b7791f;
   --color-danger: #b42318;
+  --color-skeleton: #e9ecef;
 
   /* Typography */
-  --font-sans:
-    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: var(--font-noto-sans), "Noto Sans", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;

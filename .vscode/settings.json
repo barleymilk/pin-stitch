@@ -2,5 +2,7 @@
   "editor.formatOnSave": true,
   "prettier.requireConfig": true,
   "editor.tabCompletion": "on",
-  "editor.snippetSuggestions": "top"
+  "editor.snippetSuggestions": "top",
+  "typescript.preferences.autoImportFileExcludePatterns": ["react-native", "react-native/**"],
+  "javascript.preferences.autoImportFileExcludePatterns": ["react-native", "react-native/**"]
 }
