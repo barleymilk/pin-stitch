@@ -12,6 +12,7 @@
   "dependencies": {
     "@pin-stitch/domain": "workspace:*",
     "@pin-stitch/ui": "workspace:*",
+    "lucide-react": "^1.16.0",
     "next": "^15.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
