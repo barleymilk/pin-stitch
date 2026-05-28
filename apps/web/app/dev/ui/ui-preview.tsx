@@ -52,12 +52,7 @@ export function UiPreview() {
       <PreviewSection title="Input">
         <div className="grid max-w-md gap-4">
           <Input label="검색어" placeholder="상품명, 브랜드 검색" />
-          <Input
-            label="키 (cm)"
-            type="number"
-            placeholder="165"
-            hint="체형 프로필에 사용됩니다."
-          />
+          <Input label="키 (cm)" type="number" placeholder="165" hint="체형 프로필에 사용됩니다." />
           <Input label="이메일" error="올바른 이메일을 입력해 주세요." defaultValue="invalid" />
         </div>
       </PreviewSection>

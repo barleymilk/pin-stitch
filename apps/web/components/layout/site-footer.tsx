@@ -23,8 +23,8 @@ export function SiteFooter() {
             </Link>
           </h3>
           <p className="text-sm text-text-muted">
-            핀스티치는 정교한 데이터 분석을 통해 당신만의 고유한 스타일과 완벽한 핏을 제안하는 프리미엄 패션
-            큐레이션 플랫폼입니다.
+            핀스티치는 정교한 데이터 분석을 통해 당신만의 고유한 스타일과 완벽한 핏을 제안하는
+            프리미엄 패션 큐레이션 플랫폼입니다.
           </p>
         </section>
 
@@ -51,8 +51,14 @@ export function SiteFooter() {
         </div>
 
         <div className="flex w-full flex-col gap-3 border-t border-border pt-4 md:flex-row md:items-center md:justify-between">
-          <div className="text-sm text-text-muted">&copy; 2026 PIN-STITCH. All rights reserved.</div>
-          <IconLink href="mailto:support@pin-stitch.com" label="이메일 문의" className="self-end md:self-auto">
+          <div className="text-sm text-text-muted">
+            &copy; 2026 PIN-STITCH. All rights reserved.
+          </div>
+          <IconLink
+            href="mailto:support@pin-stitch.com"
+            label="이메일 문의"
+            className="self-end md:self-auto"
+          >
             <Mail className="h-5 w-5" strokeWidth={1.75} aria-hidden />
           </IconLink>
         </div>

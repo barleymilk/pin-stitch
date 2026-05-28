@@ -3,6 +3,16 @@
   "prettier.requireConfig": true,
   "editor.tabCompletion": "on",
   "editor.snippetSuggestions": "top",
-  "typescript.preferences.autoImportFileExcludePatterns": ["react-native", "react-native/**"],
-  "javascript.preferences.autoImportFileExcludePatterns": ["react-native", "react-native/**"]
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "react-native",
+    "react-native/**"
+  ],
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
