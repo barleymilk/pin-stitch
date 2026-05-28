@@ -333,12 +333,7 @@ export interface Order {
 }
 
 export type PaymentProvider = "TOSS_PAYMENTS";
-export type PaymentStatus =
-  | "READY"
-  | "IN_PROGRESS"
-  | "APPROVED"
-  | "FAILED"
-  | "CANCELED";
+export type PaymentStatus = "READY" | "IN_PROGRESS" | "APPROVED" | "FAILED" | "CANCELED";
 
 export interface Payment {
   paymentId: PaymentId;

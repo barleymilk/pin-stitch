@@ -17,12 +17,7 @@ export function LoadingState({
   label = "불러오는 중"
 }: LoadingStateProps) {
   return (
-    <div
-      className={cn("w-full", className)}
-      role="status"
-      aria-live="polite"
-      aria-label={label}
-    >
+    <div className={cn("w-full", className)} role="status" aria-live="polite" aria-label={label}>
       <span className="sr-only">{label}</span>
       {variant === "inline" ? (
         <div className="flex items-center gap-3">

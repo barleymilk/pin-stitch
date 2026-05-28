@@ -1,7 +1,4 @@
 {
   "recommendations": ["esbenp.prettier-vscode"],
-  "unwantedRecommendations": [
-    "msjsdiag.vscode-react-native",
-    "ms-vscode.vscode-react-native"
-  ]
+  "unwantedRecommendations": ["msjsdiag.vscode-react-native", "ms-vscode.vscode-react-native"]
 }

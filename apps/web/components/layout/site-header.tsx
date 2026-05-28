@@ -58,10 +58,7 @@ export function SiteHeader() {
             </Link>
           </div>
 
-          <nav
-            className="hidden flex-1 items-center justify-center md:flex"
-            aria-label="주요 메뉴"
-          >
+          <nav className="hidden flex-1 items-center justify-center md:flex" aria-label="주요 메뉴">
             <ul className="flex items-center gap-1">
               {PRIMARY_NAV_ITEMS.map((item) => {
                 const active = item.match(pathname);
