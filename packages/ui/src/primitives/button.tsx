@@ -16,7 +16,8 @@ const buttonVariants = cva(
         primary: "bg-primary text-white hover:bg-primary-hover",
         secondary: "border border-border bg-surface text-text hover:bg-bg-subtle",
         tertiary: "text-text hover:bg-bg-subtle",
-        danger: "bg-danger text-white hover:opacity-90"
+        danger: "bg-danger text-white hover:opacity-90",
+        transparent: "text-white border-1"
       },
       size: {
         sm: "h-8 px-3 text-xs",

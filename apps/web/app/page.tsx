@@ -3,7 +3,7 @@ import { HeroCarousel } from "./components/home/hero-carousel";
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-[var(--width-customer)] flex-col gap-8 px-4 py-12">
+    <main className="mx-auto flex min-h-screen max-w-[var(--width-customer)] flex-col gap-8">
       <HeroCarousel />
       <Link
         href="/dev/ui"
