@@ -9,6 +9,33 @@ export type FooterLink = {
   label: string;
 };
 
+export type BottomNavItem = {
+  href: string;
+  label: string;
+  match: (pathname: string) => boolean;
+  action?: "search";
+};
+
+export const BOTTOM_NAV_ITEMS: BottomNavItem[] = [
+  { href: "/", label: "홈", match: (path) => path === "/" },
+  {
+    href: "/products",
+    label: "카테고리",
+    match: (path) => path.startsWith("/products")
+  },
+  { href: "/products", label: "검색", match: () => false, action: "search" },
+  {
+    href: "/me/wishlist",
+    label: "좋아요",
+    match: (path) => path.startsWith("/me/wishlist")
+  },
+  {
+    href: "/me/orders",
+    label: "마이페이지",
+    match: (path) => path.startsWith("/me/")
+  }
+];
+
 export const PRIMARY_NAV_ITEMS: NavItem[] = [
   { href: "/", label: "홈", match: (path) => path === "/" },
   { href: "/products", label: "카테고리", match: (path) => path.startsWith("/products") },
